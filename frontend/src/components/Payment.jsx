@@ -8,7 +8,8 @@ import {
 function Payment() {
   const stripe = useStripe();
   const elements = useElements();
-
+  const min_amount = 0.5;
+  const max_amount = 999999.99;
   const [errorMessage, setErrorMessage] = useState(null);
 
   const handleSubmit = async (event) => {
@@ -26,6 +27,14 @@ function Payment() {
       return;
     }
 
+    if (amount < min_amount) {
+      setErrorMessage(`The amount should be greater than ${min_amount}`);
+      return;
+    }
+    if (amount > max_amount) {
+      setErrorMessage(`The amount should be less than ${max_amount}`);
+      return;
+    }
     // Create the PaymentIntent and obtain clientSecret from your server endpoint
     const res = await fetch("http://localhost:8000/payment/", {
       method: "GET",
