@@ -39,15 +39,19 @@ def create_payment_intent(request):
 @csrf_exempt
 def my_webhook_view(request):
     payload = request.body
+    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None
 
     try:
-        event = stripe.Event.construct_from(json.loads(payload), stripe.api_key)
+        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
     except ValueError as e:
         # Invalid payload
         logging.error("Invalid payload")
         return HttpResponse(status=400)
-
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        print("Error verifying webhook signature: {}".format(str(e)))
+        return HttpResponse(status=400)
     # Handle the event
     match event.type:
         case "payment_intent.succeeded":
