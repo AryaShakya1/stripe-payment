@@ -67,7 +67,7 @@ def my_webhook_view(request):
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
         # Invalid signature
-        print("Error verifying webhook signature: {}".format(str(e)))
+        logging.error("Error verifying webhook signature: {}".format(str(e)))
         return HttpResponse(status=400)
     # Handle the event
     match event.type:
