@@ -88,3 +88,26 @@ def my_webhook_view(request):
             logging.error("Unhandled event type {}".format(event.type))
 
     return HttpResponse(status=200)
+
+
+def handle_successful_payment(payment_intent):
+    payment_intent_id = payment_intent["id"]
+    amount_paid = payment_intent["amount_received"]
+    currency = payment_intent["currency"]
+
+    try:
+        # Create or update the transaction record
+        transaction, created = Transaction.objects.update_or_create(
+            payment_intent_id=payment_intent_id,
+            defaults={
+                "amount": amount_paid,
+                "currency": currency.upper(),
+                "status": "succeeded",  # Mark the transaction as succeeded
+            },
+        )
+        logging.info(
+            f"Transaction {transaction.payment_intent_id} processed: {'created' if created else 'updated'}."
+        )
+
+    except Exception as e:
+        logging.error(f"An error occurred while processing the transaction: {str(e)}")
