@@ -73,6 +73,7 @@ def my_webhook_view(request):
     match event.type:
         case "payment_intent.succeeded":
             payment_intent = event.data.object
+            handle_successful_payment(payment_intent=payment_intent)
             logging.info("Webhook triggered: Payment successful")
         case "payment_intent.created":
             logging.info("Webhook triggered: Payment intent created ")
