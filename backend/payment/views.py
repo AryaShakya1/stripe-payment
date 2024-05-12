@@ -41,6 +41,12 @@ def create_payment_intent(request):
             automatic_payment_methods={"enabled": True},
         )
         logging.info("Payment Intent Created")
+        Transaction.objects.create(
+            payment_intent_id=paymentIntent.id,
+            amount=amount,
+            currency="usd".upper(),
+            status="pending",  # Initially set the transaction as pending
+        )
         return JsonResponse(paymentIntent, status=200)
 
     except stripe.error.StripeError as e:
