@@ -14,6 +14,12 @@ logging.basicConfig(
     filename="payment.log",
 )
 
+
+class TransactionListView(ListAPIView):
+    queryset = Transaction.objects.all().order_by("-created_at")
+    serializer_class = TransactionSerializer
+
+
 stripe.api_key = os.environ.get("STRIPE_API_KEY")
 endpoint_secret = os.environ.get("ENDPOINT_SECRET")
 
