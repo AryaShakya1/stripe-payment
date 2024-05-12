@@ -1,0 +1,58 @@
+label {
+  display: block; /* Makes the label a block element */
+  margin: 8px; /* Adds space below the label */
+  color: #6f6f6f; /* Sets the text color */
+  font-size: 16px; /* Sets the font size */
+}
+
+.amount-input {
+  width: 100%;
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f3f3f4;
+  color: #0d0c22;
+  transition: 0.3s ease;
+}
+
+.amount-input::placeholder {
+  color: #9e9ea7;
+}
+/* Adding focus style to the input field */
+.amount-input:focus {
+  outline: none;
+  border-color: rgba(109, 211, 255, 0.4);
+  background-color: #fff;
+}
+
+.submit-button {
+  background-color: black; /* Sets the background color to black */
+  margin: 8px;
+  color: white; /* Sets the text color to white */
+  padding: 10px 20px; /* Adds padding around the text */
+  font-size: 16px; /* Sets the font size */
+  border: none; /* Removes the default border */
+  border-radius: 5px; /* Rounds the corners of the button */
+  cursor: pointer; /* Changes the mouse cursor to a pointer when hovering over the button */
+  transition: background-color 0.3s; /* Smooth transition for background color change */
+}
+
+.error-message {
+  color: #d8000c; /* Sets the text color to a vibrant red */
+  background-color: #ffd2d2; /* Light red/pink background for high contrast */
+  border: 1px solid #d8000c; /* Red border to emphasize the message */
+  padding: 10px 20px; /* Padding around the text for better readability */
+  margin: 10px 0; /* Margin above and below the message */
+  font-size: 14px; /* Suitable font size for readability */
+  border-radius: 5px; /* Rounded corners for a softer look */
+  box-shadow: 0 0 10px rgba(216, 0, 12, 0.2); /* Subtle shadow for 3D effect */
+  font-weight: bold; /* Bold font for emphasis */
+}
+
+/* Hover effect for the button */
+.submit-button:hover {
+  background-color: #333333; /* Darkens the background color when hovering */
+}
