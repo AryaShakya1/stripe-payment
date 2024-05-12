@@ -11,6 +11,7 @@ function Payment() {
   const min_amount = 0.5;
   const max_amount = 999999.99;
   const [errorMessage, setErrorMessage] = useState(null);
+  const [amount, setAmount] = useState(0);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -37,7 +38,11 @@ function Payment() {
     }
     // Create the PaymentIntent and obtain clientSecret from your server endpoint
     const res = await fetch("http://localhost:8000/payment/", {
-      method: "GET",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ amount: amount * 100 }),
     });
 
     const { client_secret: clientSecret } = await res.json();
@@ -66,11 +71,24 @@ function Payment() {
   return (
     <form onSubmit={handleSubmit}>
       <PaymentElement />
-      <button type="submit" disabled={!stripe || !elements}>
+      <label>Amount (in $) :</label>
+      <input
+        type="number"
+        name="amount"
+        id="amount"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        className="amount-input"
+      />
+      <button
+        type="submit"
+        disabled={!stripe || !elements}
+        className="submit-button"
+      >
         Pay
       </button>
       {/* Show error message to your customers */}
-      {errorMessage && <div>{errorMessage}</div>}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
     </form>
   );
 }
