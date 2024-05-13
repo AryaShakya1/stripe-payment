@@ -73,7 +73,7 @@ def my_webhook_view(request):
     match event.type:
         case "payment_intent.succeeded":
             payment_intent = event.data.object
-            handle_successful_payment(payment_intent=payment_intent)
+            handle_successful_payment(webhook_payment_intent=payment_intent)
             logging.info("Webhook triggered: Payment successful")
         case "payment_intent.created":
             logging.info("Webhook triggered: Payment intent created ")
@@ -91,24 +91,31 @@ def my_webhook_view(request):
     return HttpResponse(status=200)
 
 
-def handle_successful_payment(payment_intent):
-    payment_intent_id = payment_intent["id"]
-    amount_paid = payment_intent["amount_received"]
-    currency = payment_intent["currency"]
+def handle_successful_payment(webhook_payment_intent):
+    payment_intent_id = webhook_payment_intent["id"]
+    amount_paid = webhook_payment_intent["amount_received"]
+    currency = webhook_payment_intent["currency"]
+    stripe_payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
 
-    try:
-        # Create or update the transaction record
-        transaction, created = Transaction.objects.update_or_create(
-            payment_intent_id=payment_intent_id,
-            defaults={
-                "amount": amount_paid,
-                "currency": currency.upper(),
-                "status": "succeeded",  # Mark the transaction as succeeded
-            },
-        )
-        logging.info(
-            f"Transaction {transaction.payment_intent_id} processed: {'created' if created else 'updated'}."
-        )
+    if stripe_payment_intent == webhook_payment_intent:
+        try:
+            # Create or update the transaction record
+            transaction, created = Transaction.objects.update_or_create(
+                payment_intent_id=payment_intent_id,
+                defaults={
+                    "amount": amount_paid,
+                    "currency": currency.upper(),
+                    "status": "succeeded",  # Mark the transaction as succeeded
+                },
+            )
+            logging.info(
+                f"Transaction {transaction.payment_intent_id} processed: {'created' if created else 'updated'}."
+            )
 
-    except Exception as e:
-        logging.error(f"An error occurred while processing the transaction: {str(e)}")
+        except Exception as e:
+            logging.error(
+                f"An error occurred while processing the transaction: {str(e)}"
+            )
+
+    else:
+        logging.error(f"Response from webhook not verified")
